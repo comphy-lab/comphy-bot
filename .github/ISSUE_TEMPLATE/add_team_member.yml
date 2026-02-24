@@ -1,0 +1,58 @@
+name: Add Team Member
+description: Request to add a new team member to the website
+title: "[Team]: Add "
+labels: ["team", "content"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please provide the following information for the new team member
+  - type: input
+    id: name
+    attributes:
+      label: Full Name
+      description: Full name of the team member
+    validations:
+      required: true
+  - type: input
+    id: position
+    attributes:
+      label: Current Position
+      description: Current role/position at the lab
+      placeholder: e.g., PhD Student, Postdoctoral Researcher
+    validations:
+      required: true
+  - type: textarea
+    id: education
+    attributes:
+      label: Education History
+      description: List educational background (most recent first)
+      placeholder: |
+        - Degree, Institution / year-year
+        - Previous Degree, Institution / year-year
+    validations:
+      required: true
+  - type: textarea
+    id: research
+    attributes:
+      label: Research Interests
+      description: Brief description of research interests
+    validations:
+      required: true
+  - type: input
+    id: github
+    attributes:
+      label: GitHub Username
+      description: GitHub profile URL (if available)
+  - type: input
+    id: scholar
+    attributes:
+      label: Google Scholar
+      description: Google Scholar profile URL (if available)
+  - type: input
+    id: photo
+    attributes:
+      label: Profile Photo
+      description: Please attach a square profile photo (minimum 250x250 pixels)
+    validations:
+      required: true

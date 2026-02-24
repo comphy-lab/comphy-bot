@@ -1,0 +1,117 @@
+name: Update Search Database
+
+on:
+  schedule:
+    - cron: "0 4 * * *" # Run daily at 4:00 UTC
+  workflow_dispatch: # Allow manual trigger
+  push:
+    branches: [main]
+    paths:
+      - "**/*.md"
+      - "**/*.html"
+      - ".github/workflows/update-search.yml"
+
+# Add permissions needed for the workflow
+permissions:
+  contents: write # This allows the action to commit and push changes
+
+jobs:
+  update-search:
+    runs-on: ubuntu-latest
+    env:
+      APP_BOT_USER_ID: 256885647
+
+    steps:
+      - name: Generate GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          fetch-depth: 0 # Fetch all history for proper git operations
+
+      - name: Clone comphy-search repository
+        id: clone-search-repo
+        run: |
+          GITHUB_ORG="${GITHUB_REPOSITORY%%/*}"
+          SEARCH_REPO="${SEARCH_REPO:-comphy-search}"
+          SEARCH_BRANCH="${SEARCH_BRANCH:-main}"
+          CLONE_URL="https://github.com/${GITHUB_ORG}/${SEARCH_REPO}.git"
+          CLONE_LOG="$(mktemp)"
+
+          echo "Attempting to clone search database from ${GITHUB_ORG}/${SEARCH_REPO} (${SEARCH_BRANCH})..."
+
+          if git clone --single-branch --branch "${SEARCH_BRANCH}" "${CLONE_URL}" 2>"${CLONE_LOG}"; then
+            mkdir -p assets/js
+            echo "clone_ok=true" >> "${GITHUB_OUTPUT}"
+            echo "Search database repository cloned successfully"
+          else
+            echo "clone_ok=false" >> "${GITHUB_OUTPUT}"
+            CLONE_ERROR="$(tr '\n' ' ' < "${CLONE_LOG}" | sed 's/[[:space:]]\+/ /g; s/^ //; s/ $//')"
+            echo "::error title=Search DB clone failed::Could not clone ${GITHUB_ORG}/${SEARCH_REPO} (${SEARCH_BRANCH})."
+            {
+              echo "### Search DB clone failed"
+              echo "- Repository: \`${GITHUB_ORG}/${SEARCH_REPO}\`"
+              echo "- Branch: \`${SEARCH_BRANCH}\`"
+              echo "- URL: \`${CLONE_URL}\`"
+              echo "- Error: \`${CLONE_ERROR}\`"
+            } >> "${GITHUB_STEP_SUMMARY}"
+            cat "${CLONE_LOG}" >&2
+            exit 1
+          fi
+
+      - name: Copy search database
+        id: copy-search-db
+        if: steps.clone-search-repo.outputs.clone_ok == 'true'
+        run: |
+          SEARCH_REPO="${SEARCH_REPO:-comphy-search}"
+          echo "search_db_available=false" >> "${GITHUB_OUTPUT}"
+
+          if [ ! -d "${SEARCH_REPO}" ]; then
+            echo "Warning: ${SEARCH_REPO} directory not found (clone may have failed)"
+            echo "Search functionality will be limited"
+            echo "::warning title=Search DB directory missing::Directory ${SEARCH_REPO} was not found."
+            {
+              echo "### Search DB update skipped"
+              echo "- Directory \`${SEARCH_REPO}\` was not found after clone."
+            } >> "${GITHUB_STEP_SUMMARY}"
+            exit 0
+          fi
+
+          mkdir -p assets/js
+
+          if [ -f "${SEARCH_REPO}/search_db.json" ]; then
+            cp "${SEARCH_REPO}/search_db.json" assets/js/search_db.json
+            echo "search_db_available=true" >> "${GITHUB_OUTPUT}"
+            echo "Search database copied successfully"
+          else
+            echo "Warning: search_db.json not found in ${SEARCH_REPO}"
+            echo "Search functionality will be limited"
+            echo "::warning title=search_db.json missing::No search_db.json found in ${SEARCH_REPO}."
+            {
+              echo "### Search DB update skipped"
+              echo "- Missing \`${SEARCH_REPO}/search_db.json\`."
+            } >> "${GITHUB_STEP_SUMMARY}"
+            exit 0
+          fi
+
+      - name: Commit and push changes
+        if: steps.copy-search-db.outputs.search_db_available == 'true'
+        run: |
+          if [ ! -f assets/js/search_db.json ]; then
+            echo "No search_db.json found to commit. Skipping push."
+            exit 0
+          fi
+          git config --local user.name 'comphy-search-updater[bot]'
+          git config --local user.email "${{ env.APP_BOT_USER_ID }}+comphy-search-updater[bot]@users.noreply.github.com"
+          git add assets/js/search_db.json
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Update search database from comphy-search repository"
+            git push "https://x-access-token:${{ steps.app-token.outputs.token }}@github.com/${GITHUB_REPOSITORY}.git" HEAD:main
+          fi

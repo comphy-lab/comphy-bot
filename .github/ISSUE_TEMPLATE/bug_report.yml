@@ -1,0 +1,55 @@
+name: Bug Report
+description: Report a bug or issue with the website
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report this bug!
+  - type: dropdown
+    id: page
+    attributes:
+      label: Affected Page
+      description: Which page is affected by this bug?
+      options:
+        - Homepage
+        - Research
+        - Team
+        - Publications
+        - About
+        - Other (specify in description)
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: What's not working as expected?
+      placeholder: Describe the bug in detail...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What should happen instead?
+  - type: input
+    id: browser
+    attributes:
+      label: Browser
+      description: Which browser are you using?
+      placeholder: e.g., Chrome 120, Firefox 121
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots
+      description: If applicable, add screenshots to help explain your problem
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Code of Conduct
+      description: By submitting this issue, you agree to follow our contribution guidelines
+      options:
+        - label: I agree to follow this project's Code of Conduct
+          required: true

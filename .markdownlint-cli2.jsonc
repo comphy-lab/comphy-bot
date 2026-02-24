@@ -1,0 +1,7 @@
+{
+  "config": {
+    "default": false,
+    "MD034": true,
+  },
+  "ignores": ["node_modules/**", "assets/css/academicons-1.7.0/README.md"],
+}

@@ -1,0 +1,68 @@
+name: Add Publication
+description: Request to add a new publication to the website
+title: "[Publication]: Add "
+labels: ["publication", "content"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please provide the following information for the new publication
+  - type: input
+    id: title
+    attributes:
+      label: Paper Title
+      description: Full title of the paper
+    validations:
+      required: true
+  - type: textarea
+    id: authors
+    attributes:
+      label: Authors
+      description: List all authors (use ** for lab members)
+      placeholder: "Author1, A., **Author2, B.**, & Author3, C."
+    validations:
+      required: true
+  - type: input
+    id: journal
+    attributes:
+      label: Journal/Conference
+      description: Name of the journal or conference
+    validations:
+      required: true
+  - type: input
+    id: year
+    attributes:
+      label: Publication Year
+      description: Year of publication
+    validations:
+      required: true
+  - type: input
+    id: doi
+    attributes:
+      label: DOI
+      description: Digital Object Identifier (if available)
+  - type: input
+    id: arxiv
+    attributes:
+      label: arXiv ID
+      description: arXiv identifier (if available)
+  - type: textarea
+    id: abstract
+    attributes:
+      label: Abstract
+      description: Paper abstract
+  - type: textarea
+    id: tags
+    attributes:
+      label: Research Tags
+      description: Select relevant research areas (one per line)
+      placeholder: |
+        Bubbles
+        Drops
+        Jets
+        Featured
+  - type: input
+    id: video
+    attributes:
+      label: Video URL
+      description: YouTube or other video URL (if available)

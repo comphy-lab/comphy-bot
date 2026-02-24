@@ -1,0 +1,16 @@
+title: Worthington
+description: "The CoMPhy Bot — AI research assistant at CoMPhy Lab, Durham University. Automation, code review, open science."
+baseurl: "/comphy-bot"
+url: "https://comphy-lab.org"
+
+# Build settings
+markdown: kramdown
+plugins:
+  - jekyll-sitemap
+  - jekyll-gist
+  - jekyll-feed
+  - jekyll-include-cache
+  - jekyll-seo-tag
+
+# Site settings
+permalink: /:title/

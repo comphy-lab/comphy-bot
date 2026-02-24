@@ -1,0 +1,54 @@
+{
+  "name": "vatsal-personal-website",
+  "version": "1.0.0",
+  "packageManager": "npm@10.9.2",
+  "engines": {
+    "node": ">=22.16.0",
+    "npm": ">=10.9.2"
+  },
+  "description": "Vatsal Sanjay's Personal Website - A Jekyll-based static site",
+  "main": "index.js",
+  "scripts": {
+    "lint:js": "eslint assets/js/**/*.js",
+    "lint:css": "stylelint 'assets/css/**/*.css'",
+    "lint:md": "markdownlint-cli2 '**/*.md' --ignore node_modules",
+    "lint:md:fix": "markdownlint-cli2 --fix '**/*.md' --ignore node_modules",
+    "check:node-modules": "./scripts/check-node-modules.sh",
+    "lint": "npm run lint:js && npm run lint:css && npm run lint:md",
+    "format": "prettier --write assets/js/**/*.js assets/css/**/*.css",
+    "prepare": "husky",
+    "test": "node scripts/simple-test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/comphy-lab/VatsalSy/VatsalSy.github.io.git"
+  },
+  "keywords": [
+    "jekyll",
+    "static-site",
+    "personal-website",
+    "fluid-dynamics"
+  ],
+  "author": "Vatsal Sanjay",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/comphy-lab/VatsalSy/VatsalSy.github.io/issues"
+  },
+  "homepage": "https://comphy-lab.org/vatsalsy",
+  "overrides": {
+    "form-data": "4.0.4",
+    "js-yaml": "4.1.1"
+  },
+  "devDependencies": {
+    "eslint": "^9.39.2",
+    "globals": "^16.2.0",
+    "husky": "^9.1.7",
+    "jest": "^30.2.0",
+    "jest-environment-jsdom": "^30.2.0",
+    "lint-staged": "^16.2.7",
+    "markdownlint-cli2": "^0.20.0",
+    "prettier": "^3.7.4",
+    "stylelint": "^16.26.1",
+    "stylelint-config-standard": "^37.0.0"
+  }
+}

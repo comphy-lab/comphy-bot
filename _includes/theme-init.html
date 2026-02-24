@@ -1,0 +1,16 @@
+<script>
+  (function() {
+    let saved = null;
+    try {
+      const candidate = localStorage.getItem('theme');
+      if (candidate === 'light' || candidate === 'dark') {
+        saved = candidate;
+      }
+    } catch (e) {
+      console.warn('Theme init: cannot access localStorage', e);
+    }
+    const theme = saved
+      ?? (window.matchMedia?.('(prefers-color-scheme: dark)')?.matches ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', theme);
+  })();
+</script>
