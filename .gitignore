@@ -9,3 +9,6 @@ vendor/
 # Ignore ai rules
 .DS_Store
 CLAUDE.md
+node_modules/
+_site/
+.sass-cache/
